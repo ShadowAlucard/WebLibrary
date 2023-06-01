@@ -3,8 +3,44 @@
 
 <PageTitle>Available Books</PageTitle>
 
-<h3>AvailableBooks</h3>
+@if (Lib_Books is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>AvailableBooks</h3>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>ID Number</th>
+            <th>Date of Release</th>
+        </tr>
+        </thead>
+        <body>
+            @foreach(var book in Lib_Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Publisher</td>
+                    <td>@book.Id</td>
+                    <td>@book.ReleaseDate</td>
+                </tr>
+            }
+        </body>
+    </table>    
+}
+
 
 @code {
+    private IEnumerable<BookClass>? Lib_Books { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        Lib_Books = await HttpClient.GetFromJsonAsync<IEnumerable<BookClass>>("Lib_Books");
+    }
 }
