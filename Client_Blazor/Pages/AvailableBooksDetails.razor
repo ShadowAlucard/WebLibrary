@@ -1,7 +1,8 @@
 ﻿@page "/allbooks/{id:int}"
 
-<h3>AvailableBooksDetails</h3>
+<h3>Available Books Details</h3>
 
 @code {
-
+    [Parameter]
+    public int Id { get; set; }
 }
