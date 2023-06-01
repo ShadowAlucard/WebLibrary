@@ -19,6 +19,7 @@ else
             <th>Publisher</th>
             <th>ID Number</th>
             <th>Date of Release</th>
+            <th></th>
         </tr>
         </thead>
         <body>
@@ -30,6 +31,7 @@ else
                     <td>@book.Publisher</td>
                     <td>@book.Id</td>
                     <td>@book.ReleaseDate</td>
+                    <td><a href="allbooks/@book.Id" class="btn btn-primary">Details</a></td>
                 </tr>
             }
         </body>
