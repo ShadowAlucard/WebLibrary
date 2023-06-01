@@ -1,8 +1,21 @@
 ﻿@page "/allbooks/{id:int}"
+@using BookClassApp
+@using Client_Blazor.Services
+@inject IBookService BookService
+
 
 <h3>Available Books Details</h3>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
+
+    private BookClass BookClass { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //TO-DO
+    }
 }

@@ -2,6 +2,8 @@
 {
     public interface IBookService
     {
-        Task<IEnumerable<BookClass>?> GetAllBook();
+        Task<IEnumerable<BookClass>?> GetAllBookAsync();
+
+        Task<BookClass?> GetBookByIdAsync(int id);
     }
 }
