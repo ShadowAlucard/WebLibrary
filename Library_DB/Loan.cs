@@ -5,8 +5,7 @@ namespace Library_DB
 {
     public class Loan
     {
-        public class Loan
-        {
+       
             [Key]
             [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
             public int Id { get; set; }
@@ -23,6 +22,6 @@ namespace Library_DB
             [Required]
 
             public DateTime ReturnDeadline { get; set; }
-        }
+        
     }
 }
