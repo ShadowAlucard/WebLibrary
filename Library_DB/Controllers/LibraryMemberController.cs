@@ -19,7 +19,7 @@ namespace Library_DB.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existinglibraryMember = await _libraryContext.LibraryMembers.FindAsync();
+            var existinglibraryMember = await _libraryContext.LibraryMembers.FindAsync(id);
 
             if (existinglibraryMember is null)
             {
