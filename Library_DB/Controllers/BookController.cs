@@ -3,92 +3,91 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library_DB.Controllers
 {
-    public class BookController
+
+    [ApiController]
+    [Route("[controller]")]
+    public class BooksController : ControllerBase
     {
-        [ApiController]
-        [Route("[controller]")]
-        public class BooksController : ControllerBase
+        private readonly LibraryContext _libraryContext;
+        private readonly ILogger<BooksController> _logger;
+
+        public BooksController(LibraryContext libraryContext, ILogger<BooksController> logger)
         {
-            private readonly LibraryContext _libraryContext;
-            private readonly ILogger<BooksController> _logger;
+            _libraryContext = libraryContext;
+            _logger = logger;
+        }
 
-            public BooksController(LibraryContext libraryContext, ILogger<BooksController> logger)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existingBook = await _libraryContext.Books.FindAsync(id);
+
+            if (existingBook is null)
             {
-                _libraryContext = libraryContext;
-                _logger = logger;
+                return NotFound();
             }
 
-            [HttpDelete("{id}")]
-            public async Task<IActionResult> Delete(int id)
+            _libraryContext.Books.Remove(existingBook);
+            await _libraryContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Book>>> Get()
+        {
+            _logger.LogInformation("Books endpoint was called");
+            var books = await _libraryContext.Books.ToListAsync();
+            return Ok(books);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Book>> Get(int id)
+        {
+            var book = await _libraryContext.Books.FindAsync(id);
+
+            if (book is null)
             {
-                var existingBook = await _libraryContext.Books.FindAsync(id);
-
-                if (existingBook is null)
-                {
-                    return NotFound();
-                }
-
-                _libraryContext.Books.Remove(existingBook);
-                await _libraryContext.SaveChangesAsync();
-
-                return NoContent();
+                return NotFound();
             }
 
-            [HttpGet]
-            public async Task<ActionResult<IEnumerable<Book>>> Get()
+            return Ok(book);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Book book)
+        {
+
+            _libraryContext.Books.Add(book);
+            await _libraryContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Book book)
+        {
+            if (id != book.Id)
             {
-                _logger.LogInformation("Books endpoint was called");
-                var books = await _libraryContext.Books.ToListAsync();
-                return Ok(books);
+                return BadRequest();
             }
 
-            [HttpGet("{id}")]
-            public async Task<ActionResult<Book>> Get(int id)
+            var existingBook = await _libraryContext.Books.FindAsync(id);
+
+            if (existingBook is null)
             {
-                var book = await _libraryContext.Books.FindAsync(id);
-
-                if (book is null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(book);
+                return NotFound();
             }
 
-            [HttpPost]
-            public async Task<IActionResult> Post([FromBody] Book book)
-            {
+            existingBook.Title = book.Title;
+            existingBook.Author = book.Author;
+            existingBook.Publisher = book.Publisher;
+            existingBook.InventoryNumber = book.InventoryNumber;
+            existingBook.PublicationYear = book.PublicationYear;
 
-                _libraryContext.Books.Add(book);
-                await _libraryContext.SaveChangesAsync();
-                return Ok();
-            }
+            await _libraryContext.SaveChangesAsync();
 
-            [HttpPut("{id}")]
-            public async Task<IActionResult> Put(int id, [FromBody] Book book)
-            {
-                if (id != book.Id)
-                {
-                    return BadRequest();
-                }
-
-                var existingBook = await _libraryContext.Books.FindAsync(id);
-
-                if (existingBook is null)
-                {
-                    return NotFound();
-                }
-
-                existingBook.Title = book.Title;
-                existingBook.Author = book.Author;
-                existingBook.Publisher = book.Publisher;
-                existingBook.InventoryNumber = book.InventoryNumber;
-                existingBook.PublicationYear = book.PublicationYear;
-
-                await _libraryContext.SaveChangesAsync();
-
-                return NoContent();
-            }
+            return NoContent();
         }
     }
 }
+
