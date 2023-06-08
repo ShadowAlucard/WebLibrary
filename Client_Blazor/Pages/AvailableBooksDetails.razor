@@ -11,11 +11,11 @@
     public int Id { get; set; }
 
 
-    private Book Book { get; set; }
+    private Book? Book { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        //TO-DO
+        Book = await BookService.GetBookByIdAsync(Id);
     }
 }

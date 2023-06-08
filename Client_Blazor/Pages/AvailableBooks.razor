@@ -1,6 +1,7 @@
 ﻿@page "/allbooks"
 @using Library_DB
-@inject HttpClient HttpClient
+@using Client_Blazor.Services
+@inject IBookService BookService
 
 <PageTitle>Available Books</PageTitle>
 
@@ -46,6 +47,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Lib_Books = await HttpClient.GetFromJsonAsync<IEnumerable<Book>>("Lib_Books");
+        Lib_Books = await BookService.GetAllBookAsync();
     }
 }
