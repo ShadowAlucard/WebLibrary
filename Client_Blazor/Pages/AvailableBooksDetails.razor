@@ -3,8 +3,31 @@
 @using Client_Blazor.Services
 @inject IBookService BookService
 
+@if (Book is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>@Book.Title's Details</h3>
 
-<h3>Available Books Details</h3>
+    <p>
+        Title: @Book.Title
+    </p>
+    <p>
+        Author: @Book.Author
+    </p>
+    <p>
+        Publisher: @Book.Publisher
+    </p>
+    <p>
+        Inventory Number: @Book.InventoryNumber
+    </p>
+    <p>
+        Publication Year: @Book.PublicationYear
+    </p>
+
+}
 
 @code {
     [Parameter]
