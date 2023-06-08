@@ -1,5 +1,5 @@
 ﻿@page "/allbooks/{id:int}"
-@using BookClassApp
+@using Library_DB
 @using Client_Blazor.Services
 @inject IBookService BookService
 
@@ -11,7 +11,7 @@
     public int Id { get; set; }
 
 
-    private BookClass BookClass { get; set; }
+    private Book Book { get; set; }
 
 
     protected override async Task OnInitializedAsync()

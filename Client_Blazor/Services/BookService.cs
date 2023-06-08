@@ -11,10 +11,10 @@ namespace Client_Blazor.Services
             _httpClient = httpClient;
         }
 
-        public Task<IEnumerable<BookClass>?> GetAllBookAsync() => 
-            _httpClient.GetFromJsonAsync<IEnumerable<BookClass>>("Lib_Books");
+        public Task<IEnumerable<Book>?> GetAllBookAsync() => 
+            _httpClient.GetFromJsonAsync<IEnumerable<Book>>("Lib_Books");
 
-        public Task<BookClass?> GetBookByIdAsync(int id) =>
-            _httpClient.GetFromJsonAsync<BookClass?>($"Lib_Books/{id}");
+        public Task<Book?> GetBookByIdAsync(int id) =>
+            _httpClient.GetFromJsonAsync<Book?>($"Lib_Books/{id}");
     }
 }

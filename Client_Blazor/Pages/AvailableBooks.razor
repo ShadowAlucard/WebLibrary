@@ -1,5 +1,5 @@
 ﻿@page "/allbooks"
-@using BookClassApp
+@using Library_DB
 @inject HttpClient HttpClient
 
 <PageTitle>Available Books</PageTitle>
@@ -14,11 +14,12 @@ else
     <table class="table table-bordered table-hover">
         <thead>
         <tr>
+            <th>Id</th>
             <th>Title</th>
             <th>Author</th>
             <th>Publisher</th>
-            <th>ID Number</th>
-            <th>Date of Release</th>
+            <th>Inventory Number</th>
+            <th>Publication Year</th>
             <th></th>
         </tr>
         </thead>
@@ -26,11 +27,12 @@ else
             @foreach(var book in Lib_Books)
             {
                 <tr>
+                    <td>@book.Id</td>
                     <td>@book.Title</td>
                     <td>@book.Author</td>
                     <td>@book.Publisher</td>
-                    <td>@book.Id</td>
-                    <td>@book.ReleaseDate</td>
+                    <td>@book.InventoryNumber</td>
+                    <td>@book.PublicationYear</td>
                     <td><a href="allbooks/@book.Id" class="btn btn-primary">Details</a></td>
                 </tr>
             }
@@ -40,10 +42,10 @@ else
 
 
 @code {
-    private IEnumerable<BookClass>? Lib_Books { get; set; }
+    private IEnumerable<Book>? Lib_Books { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Lib_Books = await HttpClient.GetFromJsonAsync<IEnumerable<BookClass>>("Lib_Books");
+        Lib_Books = await HttpClient.GetFromJsonAsync<IEnumerable<Book>>("Lib_Books");
     }
 }
