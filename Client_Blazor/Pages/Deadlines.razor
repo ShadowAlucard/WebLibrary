@@ -1,9 +1,47 @@
 ﻿@page "/deadlines"
+@using Client_Blazor.Services;
+@inject IBookService BookService;
 
 <PageTitle>Deadlines</PageTitle>
 
-<h3>Deadlines</h3>
+@if (MyDeadline is null || MyBook is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>Deadlines</h3>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <body>
+            @foreach (var book in MyBook)
+            @foreach (var deadline_time in MyDeadline)
+            {
+            <tr>
+                <td>@book.Title</td>
+                <td>@deadline_time.ReturnDeadline</td>
+            </tr>
+            }
+        </body>
+    </table>
+}
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    private IEnumerable<Book>? MyBook { get; set; }
+    private IEnumerable<Loan>? MyDeadline { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //MyBook = await BookService.GetBookByIdAsync(Id);
+        //MyDeadline = await BookService.GetBookByIdAsync(Id);
+    }
 }
