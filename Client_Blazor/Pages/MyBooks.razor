@@ -1,9 +1,51 @@
 ﻿@page "/mybooks"
+@using Client_Blazor.Services;
+@inject IBookService BookService;
 
 <PageTitle>My Books</PageTitle>
 
-<h3>MyBooks</h3>
+@if (MyBook is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>My Books</h3>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Publisher</th>
+                <th>Inventory Number</th>
+                <th>Publication Year</th>
+            </tr>
+        </thead>
+        <body>
+            @foreach (var book in MyBook)
+            {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Publisher</td>
+                <td>@book.InventoryNumber</td>
+                <td>@book.PublicationYear</td>
+            </tr>
+            }
+        </body>
+    </table>
+}
+
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    private IEnumerable<Book>? MyBook { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //MyBook = await BookService.GetBookByIdAsync(Id);
+    }
 }
