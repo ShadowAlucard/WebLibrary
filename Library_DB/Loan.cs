@@ -3,25 +3,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library_DB
 {
-    public class Loan
+    public class Loan : IValidatableObject
     {
-       
-            [Key]
-            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-            public int Id { get; set; }
 
-            [Required]
-            public int ReaderNumber { get; set; }  //olvasószám
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
-            [Required]
-            public int InventoryNumber { get; set; } //leltári szám
+        [Required]
+        public int ReaderNumber { get; set; }  //olvasószám
 
-            [Required]
-            public DateTime LoanDate { get; set; }
+        [Required]
+        public int InventoryNumber { get; set; } //leltári szám
 
-            [Required]
+        [Required]
+        public DateTime LoanDate { get; set; }
 
-            public DateTime ReturnDeadline { get; set; }
-        
+        [Required]
+
+        public DateTime ReturnDeadline { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (ReturnDeadline.Date < LoanDate.Date)
+            {
+                yield return new ValidationResult("ReturnDeadline is before than Loandate");
+            }
+        }
+
     }
 }
