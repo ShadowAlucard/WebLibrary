@@ -76,8 +76,8 @@ namespace Library_DB.Controllers
                 return NotFound();
             }
 
-            existingLoan.MemberId = loan.MemberId;
-            existingLoan.BookId = loan.BookId;
+            existingLoan.ReaderNumber = loan.ReaderNumber;
+            existingLoan.InventoryNumber = loan.InventoryNumber;
             existingLoan.LoanDate = loan.LoanDate;
             existingLoan.ReturnDeadline = loan.ReturnDeadline;
 
