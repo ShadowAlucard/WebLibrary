@@ -1,5 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
+@inject Utilities.ILocalStorage LocalStorage
+
+<CascadingValue Value="this">
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
