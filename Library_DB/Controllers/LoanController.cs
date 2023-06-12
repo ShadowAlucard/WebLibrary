@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library_DB.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Library_DB.Controllers
 {
@@ -52,9 +53,106 @@ namespace Library_DB.Controllers
             return Ok(loan);
         }
 
+        [HttpGet("loanedbooks/{membernumber}")]
+        public async Task<ActionResult<Loan>> GetMemberLoanedBooks(string membernumber)
+        {
+            //Táblák összekapcsolása LINQ segítségével, megfelelő adatok visszaadása.
+
+            var loan = (from l in _libraryContext.Loans
+                        join lm in _libraryContext.LibraryMembers on l.ReaderNumber equals lm.ReaderNumber
+                        join lb in _libraryContext.Books on l.InventoryNumber equals lb.InventoryNumber
+                        where l.ReaderNumber == membernumber
+                        orderby l.ReturnDeadline
+                        select new MemberLoanedBooks()
+                        {
+                            Id = l.Id,
+                            BookName = lb.Title,
+                            LoanDate = l.LoanDate,
+                            ReturnDate = l.ReturnDate,
+                            ReturnDeadline = l.ReturnDeadline
+
+                        }).ToList();
+
+            if (loan is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(loan);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Loan loan)
         {
+            try
+            {
+                var IsBookBorrowed = await _libraryContext.Loans
+                    .Where(x => x.InventoryNumber == loan.InventoryNumber && loan.ReturnDate == null).AnyAsync();
+
+                if (IsBookBorrowed)
+                {
+                    return BadRequest("Book is already borrowed");
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
+            }
+
+            var IsBookExist = await _libraryContext.Books
+                .Where(x => x.InventoryNumber == loan.InventoryNumber).AnyAsync();
+            if (!IsBookExist)
+            {
+                return BadRequest("Book with given inventorynumber doesn't exists.");
+            }
+            var IsMemberExist = await _libraryContext.LibraryMembers
+                .Where(x => x.ReaderNumber == loan.ReaderNumber).AnyAsync();
+            if (!IsMemberExist)
+            {
+                return BadRequest("Member with given readernumber doesn't exists");
+            }
+
+            var LoanedBook = _libraryContext.Books
+                .Where(x => x.InventoryNumber == loan.InventoryNumber).FirstOrDefault();
+
+            LoanedBook.IsBorrowed = true;
+            _libraryContext.Loans.Add(loan);
+            await _libraryContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("/borrow")]
+        public async Task<IActionResult> Borrow([FromBody] Loan loan)
+        {
+            try
+            {
+                var IsBookBorrowed = await _libraryContext.Loans
+                    .Where(x => x.InventoryNumber == loan.InventoryNumber && loan.ReturnDate == null).AnyAsync();
+
+                if (IsBookBorrowed)
+                {
+                    return BadRequest("Book is already borrowed.");
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
+            }
+            var LoanedBook = _libraryContext.Books
+               .Where(x => x.InventoryNumber == loan.InventoryNumber).FirstOrDefault();
+            if (LoanedBook is null)
+            {
+                return BadRequest("Book with given inventorynumber doesn't exists.");
+            }
+            var IsMemberExist = await _libraryContext.LibraryMembers
+                .Where(x => x.ReaderNumber == loan.ReaderNumber).AnyAsync();
+            if (!IsMemberExist)
+            {
+                return BadRequest("Member with given readernumber doesn't exists");
+            }
+
+            LoanedBook.IsBorrowed = true;
             _libraryContext.Loans.Add(loan);
             await _libraryContext.SaveChangesAsync();
 
@@ -76,10 +174,54 @@ namespace Library_DB.Controllers
                 return NotFound();
             }
 
+            try
+            {
+                var IsBookBorrowed = await _libraryContext.Loans
+                    .Where(x => x.InventoryNumber == loan.InventoryNumber && loan.ReturnDate == null).AnyAsync();
+
+                if (IsBookBorrowed)
+                {
+                    return BadRequest("Book is already borrowed.");
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
+            }
+
             existingLoan.ReaderNumber = loan.ReaderNumber;
             existingLoan.InventoryNumber = loan.InventoryNumber;
             existingLoan.LoanDate = loan.LoanDate;
             existingLoan.ReturnDeadline = loan.ReturnDeadline;
+
+            await _libraryContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("return/{id}")]
+        public async Task<IActionResult> Return(int id, DateTime returnDate)
+        {
+            var existingLoan = await _libraryContext.Loans.FindAsync(id);
+
+            if (existingLoan is null)
+            {
+                return NotFound();
+            }
+
+            if (existingLoan.ReturnDate is not null)
+            {
+                return BadRequest("Book is already returned.");
+            }
+
+            var ReturnedBook = _libraryContext.Books
+               .Where(x => x.InventoryNumber == existingLoan.InventoryNumber).FirstOrDefault();
+            if (ReturnedBook is null)
+            {
+                return BadRequest("A megadott leltári számú könyv nem létezik.");
+            }
+            ReturnedBook.IsBorrowed = false;
+            existingLoan.ReturnDate = returnDate;
 
             await _libraryContext.SaveChangesAsync();
 

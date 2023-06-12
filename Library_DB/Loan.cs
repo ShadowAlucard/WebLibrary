@@ -11,10 +11,10 @@ namespace Library_DB
         public int Id { get; set; }
 
         [Required]
-        public int ReaderNumber { get; set; }  //olvasószám
+        public string ReaderNumber { get; set; }  //olvasószám
 
         [Required]
-        public int InventoryNumber { get; set; } //leltári szám
+        public string InventoryNumber { get; set; } //leltári szám
 
         [Required]
         public DateTime LoanDate { get; set; }
