@@ -9,7 +9,7 @@ namespace Library_DB
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
+        //[RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
         [Required]
         public string Name { get; set; }
 

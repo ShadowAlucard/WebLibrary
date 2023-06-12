@@ -23,6 +23,8 @@ namespace Library_DB
 
         public DateTime ReturnDeadline { get; set; }
 
+        public DateTime? ReturnDate { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (ReturnDeadline.Date < LoanDate.Date)

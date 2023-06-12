@@ -19,5 +19,7 @@ namespace Library_DB
         public string InventoryNumber { get; set; }
         [Required]
         public int PublicationYear { get; set; }
+
+        public bool? IsBorrowed { get; set; }
     }
 }
