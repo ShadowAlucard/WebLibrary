@@ -55,6 +55,18 @@ namespace Library_DB.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] LibraryMember libraryMember)
         {
+            try
+            {
+                var IsMemberExist = await _libraryContext.LibraryMembers
+                    .Where(x => x.ReaderNumber == libraryMember.ReaderNumber).AnyAsync();
+
+                if (IsMemberExist)
+                    return BadRequest("Member is already exists with this readernumber");
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
+            }
             _libraryContext.LibraryMembers.Add(libraryMember);
             await _libraryContext.SaveChangesAsync();
 
@@ -74,6 +86,19 @@ namespace Library_DB.Controllers
             if (existinglibraryMember is null)
             {
                 return NotFound();
+            }
+
+            try
+            {
+                var IsMemberExist = await _libraryContext.LibraryMembers
+                    .Where(x => x.ReaderNumber == libraryMember.ReaderNumber).AnyAsync();
+
+                if (IsMemberExist)
+                    return BadRequest("Member is already exists with this readernumber");
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
             }
 
             existinglibraryMember.Name = libraryMember.Name;
