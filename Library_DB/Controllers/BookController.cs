@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library_DB.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library_DB.Controllers
@@ -52,6 +53,42 @@ namespace Library_DB.Controllers
             }
 
             return Ok(book);
+        }
+        [HttpGet("status/{id}")]
+        public async Task<ActionResult<Book>> GetBookWithLoaner(int id)
+        {
+            var book = await _libraryContext.Books.FindAsync(id);
+
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            var loanofbook = (from l in _libraryContext.Loans
+                              join lb in _libraryContext.Books on l.InventoryNumber equals lb.InventoryNumber
+                              join lm in _libraryContext.LibraryMembers on l.ReaderNumber equals lm.ReaderNumber
+                              where l.InventoryNumber == book.InventoryNumber
+                              orderby l.LoanDate descending
+                              select new BookInformation()
+                              {
+                                  Id = l.Id,
+                                  Title = book.Title,
+                                  IsBorrowed = book.IsBorrowed,
+                                  Name = lm.Name,
+                                  ReturnDeadline = l.ReturnDeadline
+                              }).FirstOrDefault();
+
+            if (loanofbook is null)
+            {
+                loanofbook = new BookInformation()
+                {
+                    Title = book.Title,
+                    IsBorrowed = null,
+                    ReturnDeadline = null,
+                };
+            }
+
+            return Ok(loanofbook);
         }
 
         [HttpPost]
