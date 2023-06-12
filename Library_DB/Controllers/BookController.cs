@@ -57,6 +57,18 @@ namespace Library_DB.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Book book)
         {
+            try
+            {
+                var IsBookExist = await _libraryContext.Books
+                    .Where(x => x.InventoryNumber == book.InventoryNumber).AnyAsync();
+
+                if (IsBookExist)
+                    return BadRequest("Book is already exists with this inventorynumber");
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
+            }
 
             _libraryContext.Books.Add(book);
             await _libraryContext.SaveChangesAsync();
@@ -76,6 +88,19 @@ namespace Library_DB.Controllers
             if (existingBook is null)
             {
                 return NotFound();
+            }
+
+            try
+            {
+                var IsBookExist = await _libraryContext.Books
+                    .Where(x => x.InventoryNumber == book.InventoryNumber).AnyAsync();
+
+                if (IsBookExist)
+                    return BadRequest("Book is already exists with this inventorynumber");
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw;
             }
 
             existingBook.Title = book.Title;
