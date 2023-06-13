@@ -54,6 +54,7 @@ namespace Library_DB.Controllers
 
             return Ok(book);
         }
+        //könyv állapotának lekérdezése
         [HttpGet("status/{id}")]
         public async Task<ActionResult<Book>> GetBookWithLoaner(int id)
         {

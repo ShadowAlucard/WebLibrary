@@ -52,7 +52,7 @@ namespace Library_DB.Controllers
 
             return Ok(loan);
         }
-
+        //Könyvek megjelenítése
         [HttpGet("loanedbooks/{membernumber}")]
         public async Task<ActionResult<Loan>> GetMemberLoanedBooks(string membernumber)
         {
@@ -121,7 +121,7 @@ namespace Library_DB.Controllers
 
             return Ok();
         }
-
+        //Kölcsönzés
         [HttpPost("/borrow")]
         public async Task<IActionResult> Borrow([FromBody] Loan loan)
         {
@@ -198,7 +198,7 @@ namespace Library_DB.Controllers
 
             return NoContent();
         }
-
+        //visszahozás
         [HttpPut("return/{id}")]
         public async Task<IActionResult> Return(int id, DateTime returnDate)
         {
@@ -218,7 +218,7 @@ namespace Library_DB.Controllers
                .Where(x => x.InventoryNumber == existingLoan.InventoryNumber).FirstOrDefault();
             if (ReturnedBook is null)
             {
-                return BadRequest("A megadott leltári számú könyv nem létezik.");
+                return BadRequest("Book with given inventorynumber doesn't exists.");
             }
             ReturnedBook.IsBorrowed = false;
             existingLoan.ReturnDate = returnDate;
