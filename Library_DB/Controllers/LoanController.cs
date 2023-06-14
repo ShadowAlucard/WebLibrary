@@ -52,7 +52,7 @@ namespace Library_DB.Controllers
 
             return Ok(loan);
         }
-        //Könyvek megjelenítése
+        //Tag által kölcsönzött könyvek adatainak megjelenítése
         [HttpGet("loanedbooks/{membernumber}")]
         public async Task<ActionResult<Loan>> GetMemberLoanedBooks(string membernumber)
         {
