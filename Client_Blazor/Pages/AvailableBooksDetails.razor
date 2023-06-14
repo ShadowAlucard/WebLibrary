@@ -2,6 +2,8 @@
 @using Library_DB
 @using Client_Blazor.Services
 @inject IBookService BookService
+@inject ILoanService LoanService
+@inject IMemberService MemberService
 
 @if (Book is null)
 {
@@ -11,7 +13,7 @@ else
 {
     <h3>@Book.Title's Details</h3>
 
-    @if (IsLoaned())
+    @if (@Book.IsBorrowed)
     {
         <h4>This book has been borrowed.</h4>
         <p>
@@ -49,21 +51,14 @@ else
 
 
     private Book? Book { get; set; }
-
+    private Loan? MyLoan { get; set; }
+    private LibraryMember? Member { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Book = await BookService.GetBookByIdAsync(Id);
+        MyLoan = await LoanService.GetLoanByIdAsync(Id);
+        Member = await MemberService.GetMemberByIdAsync(Id);
     }
 
-    protected bool IsLoaned()
-    {
-        int compareNrLoan = DateTime.Today.CompareTo(Book.LoanDate);
-        int compareNrDeadline = DateTime.Today.CompareTo(Book.ReturnDeadline);
-
-        if (compareNrLoan < 0 || compareNrDeadline > 0) // In the library
-            return false;
-        else // Loan to a person
-            return true;
-    }
 }

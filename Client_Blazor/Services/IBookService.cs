@@ -13,4 +13,11 @@
 
         Task<Loan?> GetLoanByIdAsync(int id);
     }
+
+    public interface IMemberService
+    {
+        Task<IEnumerable<LibraryMember>?> GetAllMemberAsync();
+
+        Task<LibraryMember?> GetMemberByIdAsync(int id);
+    }
 }
