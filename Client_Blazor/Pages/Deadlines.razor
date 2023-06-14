@@ -1,0 +1,70 @@
+﻿@page "/deadlines/{id:int}"
+@using Library_DB
+@using Client_Blazor.Services;
+@inject IBookService BookService;
+@inject ILoanService LoanService;
+
+<PageTitle>Deadlines</PageTitle>
+
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+{
+    @if (MyLoan is null || Lib_Books is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <h3>Deadlines</h3>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
+            <body>
+                @foreach (var book in Lib_Books)
+                {
+                <tr>
+                        @foreach (var deadline_time in MyLoan)
+                        {
+                        <td>@book.Title</td>
+                        <td>@deadline_time.ReturnDeadline</td>
+                        }
+                </tr>
+                }
+            </body>
+        </table>
+    }
+}
+else
+{
+    <h3 class="my-4">Please login!</h3>
+
+    <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Login</button>
+}
+
+
+@code {
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private IEnumerable<Book>? Lib_Books { get; set; }
+    private IEnumerable<Loan>? MyLoan { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {  
+        Lib_Books = await BookService.GetAllBookAsync();
+        MyLoan = await LoanService.GetAllLoanAsync();
+    }
+}
