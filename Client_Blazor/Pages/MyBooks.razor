@@ -4,48 +4,66 @@
 
 <PageTitle>My Books</PageTitle>
 
-@if (MyBook is null)
+
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
 {
-    <p>Loading...</p>
+    @if (Lib_Books is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <h3>My Books</h3>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Inventory Number</th>
+                    <th>Publication Year</th>
+                </tr>
+            </thead>
+            <body>
+                @foreach (var book in Lib_Books)
+                {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Publisher</td>
+                    <td>@book.InventoryNumber</td>
+                    <td>@book.PublicationYear</td>
+                </tr>
+                }
+            </body>
+        </table>
+    }
 }
 else
 {
-    <h3>My Books</h3>
+    <h3 class="my-4">Please login!</h3>
 
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Publisher</th>
-                <th>Inventory Number</th>
-                <th>Publication Year</th>
-            </tr>
-        </thead>
-        <body>
-            @foreach (var book in MyBook)
-            {
-            <tr>
-                <td>@book.Title</td>
-                <td>@book.Author</td>
-                <td>@book.Publisher</td>
-                <td>@book.InventoryNumber</td>
-                <td>@book.PublicationYear</td>
-            </tr>
-            }
-        </body>
-    </table>
+    <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Login</button>
 }
 
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
-
-    private IEnumerable<Book>? MyBook { get; set; }
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        //MyBook = await BookService.GetBookByIdAsync(Id);
+        await base.OnInitializedAsync();
+    }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private IEnumerable<Book>? Lib_Books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Lib_Books = await BookService.GetAllBookAsync();
     }
 }

@@ -6,37 +6,55 @@
 
 <PageTitle>Deadlines</PageTitle>
 
-@if (MyLoan is null || Lib_Books is null)
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
 {
-    <p>Loading...</p>
+    @if (MyLoan is null || Lib_Books is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <h3>Deadlines</h3>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
+            <body>
+                @foreach (var book in Lib_Books)
+                {
+                <tr>
+                        @foreach (var deadline_time in MyLoan)
+                        {
+                        <td>@book.Title</td>
+                        <td>@deadline_time.ReturnDeadline</td>
+                        }
+                </tr>
+                }
+            </body>
+        </table>
+    }
 }
 else
 {
-    <h3>Deadlines</h3>
+    <h3 class="my-4">Please login!</h3>
 
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Deadline</th>
-            </tr>
-        </thead>
-        <body>
-            @foreach (var book in Lib_Books)
-            {
-            <tr>
-                @foreach (var deadline_time in MyLoan)
-                {
-                    <td>@book.Title</td>
-                    <td>@deadline_time.ReturnDeadline</td>
-                }
-            </tr>
-            }
-        </body>
-    </table>
+    <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Login</button>
 }
 
+
 @code {
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
     [Parameter]
     public int Id { get; set; }
 
