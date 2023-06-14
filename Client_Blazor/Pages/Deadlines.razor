@@ -61,15 +61,10 @@ else
     private IEnumerable<Book>? Lib_Books { get; set; }
     private IEnumerable<Loan>? MyLoan { get; set; }
 
-    //private Book? Lib_Books { get; set; }
-    //private Loan? MyLoan { get; set; }
 
     protected override async Task OnInitializedAsync()
     {  
         Lib_Books = await BookService.GetAllBookAsync();
         MyLoan = await LoanService.GetAllLoanAsync();
-
-        //Lib_Books = await BookService.GetBookByIdAsync(Id);
-        //MyLoan = await LoanService.GetLoanByIdAsync(Id);
     }
 }
