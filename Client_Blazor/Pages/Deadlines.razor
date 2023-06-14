@@ -1,11 +1,12 @@
-﻿@page "/deadlines"
+﻿@page "/deadlines/{id:int}"
 @using Library_DB
 @using Client_Blazor.Services;
 @inject IBookService BookService;
+@inject ILoanService LoanService;
 
 <PageTitle>Deadlines</PageTitle>
 
-@if (MyDeadline is null || MyBook is null)
+@if (MyLoan is null || Lib_Books is null)
 {
     <p>Loading...</p>
 }
@@ -21,12 +22,14 @@ else
             </tr>
         </thead>
         <body>
-            @foreach (var book in MyBook)
-            @foreach (var deadline_time in MyDeadline)
+            @foreach (var book in Lib_Books)
             {
             <tr>
-                <td>@book.Title</td>
-                <td>@deadline_time.ReturnDeadline</td>
+                @foreach (var deadline_time in MyLoan)
+                {
+                    <td>@book.Title</td>
+                    <td>@deadline_time.ReturnDeadline</td>
+                }
             </tr>
             }
         </body>
@@ -37,15 +40,18 @@ else
     [Parameter]
     public int Id { get; set; }
 
-    //private IEnumerable<Book>? MyBook { get; set; }
-    //private IEnumerable<Loan>? MyDeadline { get; set; }
+    private IEnumerable<Book>? Lib_Books { get; set; }
+    private IEnumerable<Loan>? MyLoan { get; set; }
 
-    private Book? MyBook { get; set; }
-    private Loan? MyDeadline { get; set; }
+    //private Book? Lib_Books { get; set; }
+    //private Loan? MyLoan { get; set; }
 
     protected override async Task OnInitializedAsync()
-    {
-        MyBook = await BookService.GetBookByIdAsync(Id);
-        //MyDeadline = await BookService.GetBookByIdAsync(Id);
+    {  
+        Lib_Books = await BookService.GetAllBookAsync();
+        MyLoan = await LoanService.GetAllLoanAsync();
+
+        //Lib_Books = await BookService.GetBookByIdAsync(Id);
+        //MyLoan = await LoanService.GetLoanByIdAsync(Id);
     }
 }

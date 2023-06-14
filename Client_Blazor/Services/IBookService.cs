@@ -6,4 +6,11 @@
 
         Task<Book?> GetBookByIdAsync(int id);
     }
+
+    public interface ILoanService
+    {
+        Task<IEnumerable<Loan>?> GetAllLoanAsync();
+
+        Task<Loan?> GetLoanByIdAsync(int id);
+    }
 }
