@@ -1,0 +1,254 @@
+﻿@page "/library-members/member/{id:int}"
+@using Librarian_Blazor.Services
+@using Library_DB
+@using System.Linq
+
+@inject IBookService bookService
+@inject ILibraryMemberService libraryMemberService
+@inject ILoanService loanService
+@inject NavigationManager navManager
+
+@inject TempService tempService
+
+@if(member is null)
+{
+	<PageTitle>Librarian - Loading member data...</PageTitle>
+	<p>Loading data...</p>
+}
+else
+{
+	<PageTitle>Librarian - @member.Name's details</PageTitle>
+
+	#region Member Details
+	
+	<h3>@member.Name's details</h3>
+
+	<p>ID: @member.Id</p>
+	<p>Name: @member.Name</p>
+	<p>Age: @(((DateTime.Today - member.BirthDate).TotalDays / 365.25).ToString("0"))</p>
+	<p>Birth date: @member.BirthDate.ToShortDateString()</p>
+	<p>Address: @member.Address</p>
+	<p>Reader Number: @member.ReaderNumber</p>
+	
+	<a href="library-members/edit/@Id" class=" btn btn-success">Edit Data</a>
+	
+	#endregion
+	
+	#region Register Books
+	
+	<h3>Borrow Book</h3>
+	@if(books is null)
+	{
+		<p>Loading data...</p>
+	}
+	else
+	{
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>Title</th>	
+					<th>Author</th>
+					<th>Publisher</th>
+					<th>Publication Year</th>
+					<th>Inventory Number</th>
+					<th>Status</th>
+					<th>Borrow</th>
+					<th>More</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var book in books)
+				{
+					<tr>
+						<td>@book.Title</td>
+						<td>@book.Author</td>
+						<td>@book.Publisher</td>
+						<td>@book.PublicationYear</td>
+						<td>@book.InventoryNumber</td>
+						@if(book.IsBorrowed is true)
+						{
+							<td class="text-danger">Borrowed</td>
+							<td></td>
+						}
+						else
+						{
+							<td class="text-success">Avalible</td>
+							<td><button @onclick="() => OnBorrowBookAsync(member,book)" class="btn btn-success">Borrow</button></td>
+						}
+					<td><a href="library-books/book/@book.Id" class="btn btn-primary">More</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	#endregion
+
+
+	#region Loan History
+
+	<h3>Loan History</h3>
+	@if(membersLoanHistory is null)
+	{
+		<p>Loading data...</p>
+	}
+	else
+	{
+		<table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Inventory Number</th>
+			<th>Borrowed</th>
+            <th>Deadline</th>
+            <th>Returned</th>
+			<th>Status</th>
+			<th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var loan in membersLoanHistory)
+        {
+            <tr>
+                <td>@loan.InventoryNumber</td>
+				<td>@loan.LoanDate.ToShortDateString()</td>
+                <td>@loan.ReturnDeadline.ToShortDateString()</td>
+				<td>@(loan.ReturnDate.HasValue ? loan.ReturnDate.Value.ToShortDateString() : "-")</td>
+                @if(loan.ReturnDate is null)
+				{
+					if (DateTime.Now > loan.ReturnDeadline)
+					{
+						<td class="text-danger">Not Returned</td>
+					}
+					else
+					{
+						<td>On Loan</td>
+					}
+                }
+				else if (loan.ReturnDate > loan.ReturnDeadline)
+				{
+					<td class="text-warning">Late Return</td>
+				}
+				else
+				{
+                    <td class="text-success">Returned</td>
+                }
+				@if(loan.ReturnDate is null)
+				{
+					<td><button @onclick="() => OnReturnBookButton(loan)" class="btn btn-primary">Return</button></td>
+				}
+			</tr>
+        }
+        </tbody>
+    </table>
+	}
+
+	#endregion
+}
+<button @onclick="@OnBackButton" class=" btn btn-primary form-control">Back</button>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	public LibraryMember member { get; set; }
+
+	private IEnumerable<Book>? books { get; set; }
+
+	private IEnumerable<Loan>? membersLoanHistory { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		test();
+		//member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
+
+		//if (member is null)
+		//	return;
+
+		//memberLoans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+
+		books = await bookService.GetAllBooksAsync();
+
+		//if(avalibleBooks is not null)
+		//{
+		//	avalibleBooks = avalibleBooks.Where(book => book.IsBorrowed == false);
+		//}
+	}
+
+	private void test()
+	{
+		member = tempService.members.First(x => x.Id == Id);
+		books = tempService.books;
+		membersLoanHistory = tempService.loans.Where(loan => loan.ReaderNumber == member.ReaderNumber);
+		//membersLoanHistory = new List<Loan>
+		//{
+		//	new Loan
+		//	{
+		//		Id = 1,
+		//		InventoryNumber = "10ef",
+		//		LoanDate = DateTime.Now,
+		//		ReaderNumber = "fefef",
+		//		ReturnDate = null,
+		//		ReturnDeadline = DateTime.Now.AddMonths(1)
+		//	},
+		//	new Loan
+		//	{
+		//		Id = 2,
+		//		InventoryNumber = "1010xd",
+		//		LoanDate = DateTime.Now,
+		//		ReaderNumber = "fefef",
+		//		ReturnDate = DateTime.Now.AddDays(3),
+		//		ReturnDeadline = DateTime.Now.AddMonths(5)
+		//	},
+		//	new Loan
+		//	{
+		//		Id = 3,
+		//		InventoryNumber = "10ef",
+		//		LoanDate = DateTime.Now.AddDays(-30),
+		//		ReaderNumber = "fefef",
+		//		ReturnDate = null,
+		//		ReturnDeadline = DateTime.Now.AddDays(-2)
+		//	},			
+		//	new Loan
+		//	{
+		//		Id = 4,
+		//		InventoryNumber = "kefe",
+		//		LoanDate = DateTime.Now.AddDays(-30),
+		//		ReaderNumber = "nemjo",
+		//		ReturnDate = DateTime.Now,
+		//		ReturnDeadline = DateTime.Now.AddDays(-2)
+		//	}
+
+		//};
+	}
+
+	private void OnBackButton()
+	{
+		navManager.NavigateTo("/library-members");
+	}
+
+	private void OnReturnBookButton(Loan loan) 
+	{
+		loan.ReturnDate = DateTime.Today;
+		//TODO: A könyv isBorrowed értékének falsera állítása!
+		tempService.books.First(book => book.InventoryNumber == loan.InventoryNumber).IsBorrowed = false;
+
+		loanService.UpdateLoanAsync(loan.Id, loan);
+	}
+
+	private async Task OnBorrowBookAsync(LibraryMember member, Book book)
+	{
+		book.IsBorrowed = true;
+
+		var loan = new Loan
+		{
+			ReaderNumber = member.ReaderNumber,
+			InventoryNumber = book.InventoryNumber,
+			LoanDate = DateTime.Today,
+			ReturnDeadline = DateTime.Today.AddMonths(3),
+			ReturnDate = null
+		};
+
+		tempService.loans.Add(loan);
+		await loanService.AddLoanAsync(loan);
+		await bookService.UpdateBookAsync(book.Id, book);
+	}
+}
