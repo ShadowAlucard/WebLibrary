@@ -1,8 +1,82 @@
-﻿@page "/members-list"
+﻿@page "/library-members"
+@using Library_DB
+@using Librarian_Blazor.Services
+
+@inject ILibraryMemberService libraryMemberService
+@inject ILoanService loanService
+
+@inject TempService tempService
+
 <PageTitle>Librarian - Library Members</PageTitle>
 
 <h3>Members of the Library</h3>
 
-@code {
+@if(members is null)
+{
+	<PageTitle>Librarian - Loading books data...</PageTitle>
+	<p>Loading data...</p>
+}
+else
+{
+	<PageTitle>Librarian - Library Books</PageTitle>
+	<table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Reader Number</th>
+            <th>Loan Count</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var member in members)
+        {
+            <tr>
+                <td>@member.Name</td>
+                <td>@member.ReaderNumber</td>
+                <td>@(membersBorrowedBookCount is not null ? membersBorrowedBookCount[member] : "?")</td>
+                <td><a href="library-members/member/@member.Id" class="btn btn-primary">More</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
+@code {
+    private IEnumerable<LibraryMember>? members { get; set; }
+    private Dictionary<LibraryMember, int>? membersBorrowedBookCount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //members = await libraryMemberService.GetAllLibraryMembersAsync();
+
+        members = tempService.members;
+
+        if (members is null)
+            return;
+
+        membersBorrowedBookCount = await GetAllMemberBorrowCount();
+    }
+
+    private async Task<Dictionary<LibraryMember,int>?> GetAllMemberBorrowCount()
+    {
+        Dictionary<LibraryMember, int> result = new();
+
+        if (members is null)
+            return null;
+
+        foreach (var member in members)
+        {
+            //IEnumerable<Loan>? loans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+            //if (loans is null)
+            //{
+            //    result[member] = 0;
+            //    continue;
+            //}
+            //result[member] = loans.Count();
+            result[member] = Random.Shared.Next(0,10);
+        }
+
+        return result;
+    }
 }
