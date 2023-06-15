@@ -1,0 +1,115 @@
+﻿@using Library_DB
+@using Librarian_Blazor.Services
+
+@inject ILoanService loanService
+
+<MemberBorrowedBooksList Model="@member" DisplayRemoveButton="@displayRemoveButton">
+	@if(membersLoanHistory is null)
+	{
+		<p>Loading data...</p>
+	}
+	else
+	{
+		<table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Inventory Number</th>
+			<th>Borrowed</th>
+            <th>Deadline</th>
+            <th>Returned</th>
+			<th>Status</th>
+			@if(displayRemoveButton) {
+				<th></th>
+			}
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var loan in membersLoanHistory)
+        {
+            <tr>
+                <td>@loan.InventoryNumber</td>
+				<td>@loan.LoanDate.ToShortDateString()</td>
+                <td>@loan.ReturnDeadline.ToShortDateString()</td>
+				<td>@(loan.ReturnDate.HasValue ? loan.ReturnDate.Value.ToShortDateString() : "-")</td>
+                @if(loan.ReturnDate is null)
+				{
+					if (DateTime.Now > loan.ReturnDeadline)
+					{
+						<td class="text-danger">Not Returned</td>
+					}
+					else
+					{
+						<td>On Loan</td>
+					}
+                }
+				else if (loan.ReturnDate > loan.ReturnDeadline)
+				{
+					<td class="text-warning">Late Return</td>
+				}
+				else
+				{
+                    <td class="text-success">Returned</td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+	}
+</MemberBorrowedBooksList>
+
+@code {
+	[Parameter]
+	public LibraryMember member { get; set; }
+
+	[Parameter]
+	public bool displayRemoveButton { get; set; }
+
+	private IEnumerable<Loan>? membersLoanHistory { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		membersLoanHistory = new List<Loan>
+		{
+			new Loan
+			{
+				Id = 1,
+				InventoryNumber = "10ef",
+				LoanDate = DateTime.Now,
+				ReaderNumber = "fefef",
+				ReturnDate = null,
+				ReturnDeadline = DateTime.Now.AddMonths(1)
+			},
+			new Loan
+			{
+				Id = 2,
+				InventoryNumber = "1010xd",
+				LoanDate = DateTime.Now,
+				ReaderNumber = "fefef",
+				ReturnDate = DateTime.Now.AddDays(3),
+				ReturnDeadline = DateTime.Now.AddMonths(5)
+			},
+			new Loan
+			{
+				Id = 3,
+				InventoryNumber = "10ef",
+				LoanDate = DateTime.Now.AddDays(-30),
+				ReaderNumber = "fefef",
+				ReturnDate = null,
+				ReturnDeadline = DateTime.Now.AddDays(-2)
+			},			
+			new Loan
+			{
+				Id = 4,
+				InventoryNumber = "kefe",
+				LoanDate = DateTime.Now.AddDays(-30),
+				ReaderNumber = "nemjo",
+				ReturnDate = DateTime.Now,
+				ReturnDeadline = DateTime.Now.AddDays(-2)
+			}
+
+		};
+		//membersLoanHistory = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+	}
+
+
+}
