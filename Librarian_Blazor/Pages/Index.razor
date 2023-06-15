@@ -1,7 +1,39 @@
 ﻿@page "/"
 
+@using Librarian_Blazor.Services
+@using Library_DB
+
+@inject IBookService bookService
+@inject ILibraryMemberService libraryMemberService
+@inject TempService tempService
+
 <PageTitle>Librarian - Home</PageTitle>
 
 <h1>Home page</h1>
 
+<h4>
 Welcome to the Library.
+</h4>
+
+<h4>
+This is the Librarian Client main page. 
+You can add new members to the library, edit their data, remove them, 
+or view and manage the books of the library.
+</h4>
+
+<h4>Current member count: @(members is null ? "loading..." : members.Count())</h4>
+<h4>Current books count: @(books is null ? "loading..." : books.Count())</h4>
+
+@code {
+	private IEnumerable<LibraryMember>? members { get; set; }
+	private IEnumerable<Book>? books { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		//members = await libraryMemberService.GetAllLibraryMembersAsync();
+		//books = await bookService.GetAllBooksAsync();
+
+		members = tempService.members;
+		books = tempService.books;
+	}
+}
