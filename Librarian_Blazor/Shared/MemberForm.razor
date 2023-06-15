@@ -1,0 +1,39 @@
+﻿@using Library_DB
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubminAsync" buttonTitle="@buttonTitle">
+	<DataAnnotationsValidator/>
+
+	<div class="mb-3">
+		<label class="form-label">Name</label>
+		<InputText @bind-Value="model.Name" class="form-control"/>
+		<ValidationMessage For="() => model.Name"/>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Address</label>
+		<InputText @bind-Value="model.Address" class="form-control"/>
+		<ValidationMessage For="() => model.Address"/>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Birth Date</label>
+		<InputDate @bind-Value="model.BirthDate" class="form-control"/>
+		<ValidationMessage For="() => model.BirthDate"/>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Reader Number</label>
+		<InputText @bind-Value="model.ReaderNumber" class="form-control"/>
+		<ValidationMessage For="() => model.ReaderNumber"/>
+	</div>
+
+	<button type="submit" class="btn btn-success form-control mb-3">@buttonTitle</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public LibraryMember model { get; set; }
+
+	[Parameter]
+	public string buttonTitle { get; set; }
+
+	[Parameter]
+	public Func<Task> HandleValidSubminAsync { get; set; }
+}
