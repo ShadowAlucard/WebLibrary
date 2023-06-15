@@ -52,6 +52,28 @@ namespace Library_DB.Controllers
 
             return Ok(loan);
         }
+        //ugyanazt tudja mint a Get() csak Name,BookId és Title-el kiegészülve
+        [HttpGet("withnames")]
+        public async Task<ActionResult<IEnumerable<Loan>>> GetLoansWithNames()
+        {
+            var loans = (from l in _libraryContext.Loans
+                         join lm in _libraryContext.LibraryMembers on l.ReaderNumber equals lm.ReaderNumber
+                         join lb in _libraryContext.Books on l.InventoryNumber equals lb.InventoryNumber
+                         orderby l.ReturnDeadline
+                         select new LoanWithNames()
+                         {
+                             ReaderNumber = l.ReaderNumber,
+                             Name = lm.Name,
+                             BookId = lb.Id,
+                             InventoryNumber = l.InventoryNumber,
+                             Title = lb.Title,
+                             LoanDate = l.LoanDate,
+                             ReturnDeadline = l.ReturnDeadline,
+                             ReturnDate = l.ReturnDate,
+                         }).ToList();
+
+            return Ok(loans);
+        }
         //Tag által kölcsönzött könyvek adatainak megjelenítése
         [HttpGet("loanedbooks/{membernumber}")]
         public async Task<ActionResult<Loan>> GetMemberLoanedBooks(string membernumber)
