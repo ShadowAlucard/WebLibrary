@@ -1,8 +1,60 @@
-﻿@page "/books-list"
-<PageTitle>Librarian - Library Books</PageTitle>
+﻿@page "/library-books"
+@using Library_DB
+@using Librarian_Blazor.Services
+
+@inject IBookService bookService
+@inject TempService tempService
 
 <h3>Books of the Library</h3>
 
+@if(books is null)
+{
+	<PageTitle>Librarian - Loading books data...</PageTitle>
+	<p>Loading data...</p>
+}
+else
+{
+	<PageTitle>Librarian - Library Books</PageTitle>
+	<table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Inventory Number</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var book in books)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.InventoryNumber</td>
+                @if(book.IsBorrowed == true){
+                    <td class="text-danger">Borrowed</td>
+                }else {
+                    <td class="text-success">Avalible</td>
+                }
+                <td><a href="library-books/book/@book.Id" class="btn btn-primary">Details</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
 @code {
 
+    private IEnumerable<Book>? books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //books = await bookService.GetAllBooksAsync();
+
+        test();
+    }
+
+    private void test()
+    {
+        books = tempService.books;
+    }
 }
