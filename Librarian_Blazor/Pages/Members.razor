@@ -48,9 +48,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        //members = await libraryMemberService.GetAllLibraryMembersAsync();
+        members = await libraryMemberService.GetAllLibraryMembersAsync();
 
-        members = tempService.members;
+        //members = tempService.members;
 
         if (members is null)
             return;
@@ -67,14 +67,14 @@ else
 
         foreach (var member in members)
         {
-            //IEnumerable<Loan>? loans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
-            //if (loans is null)
-            //{
-            //    result[member] = 0;
-            //    continue;
-            //}
-            //result[member] = loans.Count();
-            result[member] = Random.Shared.Next(0,10);
+            IEnumerable<Loan>? loans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+            if (loans is null)
+            {
+                result[member] = 0;
+                continue;
+            }
+            result[member] = loans.Count();
+            //result[member] = Random.Shared.Next(0,10);
         }
 
         return result;

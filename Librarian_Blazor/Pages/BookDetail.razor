@@ -43,8 +43,8 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		//book = await bookService.GetBookByIdAsync(Id);
-		book = tempService.books.First(x => x.Id == Id);
+		book = await bookService.GetBookByIdAsync(Id);
+		//book = tempService.books.First(x => x.Id == Id);
 
 		//TODO: Show who's borrowed the book
 	}

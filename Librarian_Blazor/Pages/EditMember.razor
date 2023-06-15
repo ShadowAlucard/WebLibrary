@@ -31,21 +31,21 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		//member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
-		member = tempService.members.First(c => c.Id == Id);
-		index = tempService.members.IndexOf(member);
+		member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
+		//member = tempService.members.First(c => c.Id == Id);
+		//index = tempService.members.IndexOf(member);
 	}
 
 	private async Task HandleValidSubminAsync()
 	{
-		//await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
+		await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
 		navManager.NavigateTo("library-members");
-		tempService.members[index] = member;
+		//tempService.members[index] = member;
 	}
 	
 	private async Task OnDeleteButton()
 	{
-		tempService.members.Remove(tempService.members.First(m => m.Id == Id));
+		//tempService.members.Remove(tempService.members.First(m => m.Id == Id));
 		await libraryMemberService.DeleteLibraryMemberAsync(Id);
 		navManager.NavigateTo("library-members");
 	}

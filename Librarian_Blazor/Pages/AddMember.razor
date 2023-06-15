@@ -19,8 +19,8 @@
 
 	private async Task HandleValidSubminAsync()
 	{
-		//await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
-		tempService.members.Add(member);
+		await libraryMemberService.AddLibraryMemberAsync(member);
+		//tempService.members.Add(member);
 		navManager.NavigateTo("library-members");
 	}
 }

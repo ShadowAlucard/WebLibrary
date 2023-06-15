@@ -157,13 +157,13 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		test();
-		//member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
+		//test();
+		member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
 
-		//if (member is null)
-		//	return;
+		if (member is null)
+			return;
 
-		//memberLoans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+		membersLoanHistory = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
 
 		books = await bookService.GetAllBooksAsync();
 
@@ -225,13 +225,13 @@ else
 		navManager.NavigateTo("/library-members");
 	}
 
-	private void OnReturnBookButton(Loan loan) 
+	private async Task OnReturnBookButton(Loan loan) 
 	{
 		loan.ReturnDate = DateTime.Today;
 		//TODO: A könyv isBorrowed értékének falsera állítása!
-		tempService.books.First(book => book.InventoryNumber == loan.InventoryNumber).IsBorrowed = false;
+		//tempService.books.First(book => book.InventoryNumber == loan.InventoryNumber).IsBorrowed = false;
 
-		loanService.UpdateLoanAsync(loan.Id, loan);
+		await loanService.UpdateLoanAsync(loan.Id, loan);
 	}
 
 	private async Task OnBorrowBookAsync(LibraryMember member, Book book)
@@ -247,7 +247,7 @@ else
 			ReturnDate = null
 		};
 
-		tempService.loans.Add(loan);
+		//tempService.loans.Add(loan);
 		await loanService.AddLoanAsync(loan);
 		await bookService.UpdateBookAsync(book.Id, book);
 	}

@@ -30,10 +30,10 @@ or view and manage the books of the library.
 
 	protected override async Task OnInitializedAsync()
 	{
-		//members = await libraryMemberService.GetAllLibraryMembersAsync();
-		//books = await bookService.GetAllBooksAsync();
+		members = await libraryMemberService.GetAllLibraryMembersAsync();
+		books = await bookService.GetAllBooksAsync();
 
-		members = tempService.members;
-		books = tempService.books;
+		//members = tempService.members;
+		//books = tempService.books;
 	}
 }
