@@ -1,0 +1,26 @@
+﻿@page "/library-members/add"
+
+@using Library_DB
+@using Librarian_Blazor.Services
+
+@inject ILibraryMemberService libraryMemberService
+@inject TempService tempService
+@inject NavigationManager navManager
+
+<h3>Add new Member</h3>
+
+<MemberForm model="@member" buttonTitle="Add" HandleValidSubminAsync="@HandleValidSubminAsync"/>
+
+@code {
+	private LibraryMember? member { get; set; } = new()
+	{
+		BirthDate = DateTime.Today
+	};
+
+	private async Task HandleValidSubminAsync()
+	{
+		//await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
+		tempService.members.Add(member);
+		navManager.NavigateTo("library-members");
+	}
+}
