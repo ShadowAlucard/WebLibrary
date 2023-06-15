@@ -1,4 +1,4 @@
-﻿using Library_DB;
+﻿using Library_Contract;
 using System.Net.Http.Json;
 
 namespace Librarian_Blazor.Services

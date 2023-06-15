@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using Library_DB;
+using Library_Contract;
 
 namespace Librarian_Blazor.Services
 {

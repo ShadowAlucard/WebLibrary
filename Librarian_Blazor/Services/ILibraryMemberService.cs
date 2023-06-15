@@ -1,4 +1,4 @@
-﻿using Library_DB;
+﻿using Library_Contract;
 
 namespace Librarian_Blazor.Services
 {
