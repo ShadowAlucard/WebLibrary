@@ -1,0 +1,56 @@
+﻿@page "/library-books/book/{id:int}"
+@using Librarian_Blazor.Services
+@using Library_DB
+
+@inject IBookService bookService
+@inject TempService tempService
+@inject NavigationManager navManager
+
+@if(book is null)
+{
+	<PageTitle>Librarian - Loading book data...</PageTitle>
+	<p>Loading data...</p>
+}
+else
+{
+	<PageTitle>Librarian - @book.Title book's details</PageTitle>
+
+	<h3>@book.Title</h3>
+
+	<p>ID: @book.Id</p>
+	<p>Title: @book.Title</p>
+	<p>Author: @book.Author</p>
+	<p>Publisher: @book.Publisher</p>
+	<p>Publication Year: @book.PublicationYear</p>
+	<p>Inventory Number: @book.InventoryNumber</p>
+	@if(book.IsBorrowed == true){
+        <p class="text-danger">Status: Borrowed</p>
+		<p>Borrowed by: </p>
+    }else {
+        <p class="text-success">Status: Avalible</p>
+    }
+
+}
+<button @onclick="@OnBackButton" class=" bnt btn-primary form-control">Back</button>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	private Book? book { get; set; }
+
+	private LibraryMember? borrowedBy { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		//book = await bookService.GetBookByIdAsync(Id);
+		book = tempService.books.First(x => x.Id == Id);
+
+		//TODO: Show who's borrowed the book
+	}
+
+	private async Task OnBackButton()
+	{
+		navManager.NavigateTo("/library-books");
+	}
+}
