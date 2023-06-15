@@ -1,0 +1,51 @@
+﻿@page "/library-members/edit/{id:int}"
+
+@using Library_DB
+@using Librarian_Blazor.Services
+
+@inject ILibraryMemberService libraryMemberService
+@inject TempService tempService
+@inject NavigationManager navManager
+
+@if(member is null)
+{
+	<p>Loading data...</p>
+}
+else
+{
+	<h3>Edit @member.Name's data</h3>
+
+	<MemberForm model="@member" buttonTitle="Save" HandleValidSubminAsync="@HandleValidSubminAsync"/>
+
+	<button @onclick="@OnDeleteButton" class="btn btn-danger form-control mb-3">Delete</button>
+
+	<a href="/library-members/member/@Id" class="btn btn-primary form-control">Cancel</a>
+}
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	private LibraryMember? member { get; set; }
+	private int index = -1;
+
+	protected override async Task OnInitializedAsync()
+	{
+		//member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
+		member = tempService.members.First(c => c.Id == Id);
+		index = tempService.members.IndexOf(member);
+	}
+
+	private async Task HandleValidSubminAsync()
+	{
+		//await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
+		navManager.NavigateTo("library-members");
+		tempService.members[index] = member;
+	}
+	
+	private async Task OnDeleteButton()
+	{
+		await libraryMemberService.DeleteLibraryMemberAsync(Id);
+		navManager.NavigateTo("library-members");
+	}
+}
