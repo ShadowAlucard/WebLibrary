@@ -1,4 +1,7 @@
-﻿namespace Client_Blazor.Services
+﻿using Library_Contract;
+using Library_DB;
+
+namespace Client_Blazor.Services
 {
     public interface IBookService
     {
