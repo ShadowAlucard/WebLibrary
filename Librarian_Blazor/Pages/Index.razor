@@ -5,7 +5,6 @@
 
 @inject IBookService bookService
 @inject ILibraryMemberService libraryMemberService
-@inject TempService tempService
 
 <PageTitle>Librarian - Home</PageTitle>
 
@@ -21,8 +20,24 @@ You can add new members to the library, edit their data, remove them,
 or view and manage the books of the library.
 </h4>
 
-<h4>Current member count: @(members is null ? "loading..." : members.Count())</h4>
+@*<h4>Current member count: @(members is null ? "loading..." : members.Count())</h4>
 <h4>Current books count: @(books is null ? "loading..." : books.Count())</h4>
+<h4>Current books borrowed: @(books is null ? "loading..." : books.Where(b => b.IsBorrowed is true).Count())</h4>*@
+
+<table class="h5">
+	<tr>
+		<th class="small text-muted pr-2" scope="row">Current member count </th>
+		<td>@(members is null ? "..." : members.Count())</td>
+	</tr>
+	<tr>
+		<th class="small text-muted pr-2" scope="row">Current books count </th>
+		<td>@(books is null ? "..." : books.Count())</td>
+	</tr>
+	<tr>
+		<th class="small text-muted pr-2" scope="row">Current books borrowed </th>
+		<td>@(books is null ? "..." : books.Where(b => b.IsBorrowed is true).Count())</td>
+	</tr>
+</table>
 
 @code {
 	private IEnumerable<LibraryMember>? members { get; set; }
@@ -32,8 +47,5 @@ or view and manage the books of the library.
 	{
 		members = await libraryMemberService.GetAllLibraryMembersAsync();
 		books = await bookService.GetAllBooksAsync();
-
-		//members = tempService.members;
-		//books = tempService.books;
 	}
 }

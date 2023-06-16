@@ -5,8 +5,6 @@
 @inject ILibraryMemberService libraryMemberService
 @inject ILoanService loanService
 
-@inject TempService tempService
-
 <PageTitle>Librarian - Library Members</PageTitle>
 
 <h3>Members of the Library</h3>
@@ -24,7 +22,7 @@ else
         <tr>
             <th>Full Name</th>
             <th>Reader Number</th>
-            <th>Loan Count</th>
+            <th>Borrowed Books</th>
             <th></th>
         </tr>
         </thead>
@@ -50,8 +48,6 @@ else
     {
         members = await libraryMemberService.GetAllLibraryMembersAsync();
 
-        //members = tempService.members;
-
         if (members is null)
             return;
 
@@ -73,8 +69,16 @@ else
                 result[member] = 0;
                 continue;
             }
-            result[member] = loans.Count();
-            //result[member] = Random.Shared.Next(0,10);
+            else
+            {
+                int counter = 0;
+                foreach (var loan in loans)
+                {
+                    if (loan.ReturnDate is null)
+                        counter++;
+                }
+                result[member] = counter;
+            }
         }
 
         return result;

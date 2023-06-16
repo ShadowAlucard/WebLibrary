@@ -3,7 +3,6 @@
 @using Librarian_Blazor.Services
 
 @inject IBookService bookService
-@inject TempService tempService
 
 <h3>Books of the Library</h3>
 
@@ -49,12 +48,5 @@ else
     protected override async Task OnInitializedAsync()
     {
         books = await bookService.GetAllBooksAsync();
-
-        //test();
-    }
-
-    private void test()
-    {
-        books = tempService.books;
     }
 }

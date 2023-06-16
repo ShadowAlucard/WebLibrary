@@ -4,8 +4,9 @@
 @using Librarian_Blazor.Services
 
 @inject ILibraryMemberService libraryMemberService
-@inject TempService tempService
+@inject ILoanService loanService
 @inject NavigationManager navManager
+@inject IJSRuntime jsRuntime
 
 @if(member is null)
 {
@@ -15,7 +16,7 @@ else
 {
 	<h3>Edit @member.Name's data</h3>
 
-	<MemberForm model="@member" buttonTitle="Save" HandleValidSubminAsync="@HandleValidSubminAsync"/>
+	<MemberForm model="@member" formType="MemberFormType.Edit" HandleValidSubminAsync="@HandleValidSubminAsync"/>
 
 	<button @onclick="@OnDeleteButton" class="btn btn-danger form-control mb-3">Delete</button>
 
@@ -27,26 +28,38 @@ else
 	public int Id { get; set; }
 
 	private LibraryMember? member { get; set; }
-	private int index = -1;
 
 	protected override async Task OnInitializedAsync()
 	{
 		member = await libraryMemberService.GetLibraryMemberByIdAsync(Id);
-		//member = tempService.members.First(c => c.Id == Id);
-		//index = tempService.members.IndexOf(member);
 	}
 
 	private async Task HandleValidSubminAsync()
 	{
 		await libraryMemberService.UpdateLibraryMemberAsync(Id, member);
 		navManager.NavigateTo("library-members");
-		//tempService.members[index] = member;
 	}
-	
+
 	private async Task OnDeleteButton()
 	{
-		//tempService.members.Remove(tempService.members.First(m => m.Id == Id));
-		await libraryMemberService.DeleteLibraryMemberAsync(Id);
-		navManager.NavigateTo("library-members");
+		if (member is null)
+			throw new NullReferenceException("Member is null!");
+
+		IEnumerable<Loan>? memberLoans = await loanService.GetAllLoansByMemberNumberAsync(member.ReaderNumber);
+
+		if (memberLoans?.Any() != true)
+		{
+			await libraryMemberService.DeleteLibraryMemberAsync(Id);
+			navManager.NavigateTo("library-members");
+		}
+		else
+		{
+			await ShowAlert("Cannot delete user with active loans!");
+		}
+	}
+
+	private async Task ShowAlert(string message)
+	{
+		await jsRuntime.InvokeVoidAsync("alert", message);
 	}
 }

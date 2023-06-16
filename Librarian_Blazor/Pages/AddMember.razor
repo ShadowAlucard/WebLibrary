@@ -4,12 +4,11 @@
 @using Librarian_Blazor.Services
 
 @inject ILibraryMemberService libraryMemberService
-@inject TempService tempService
 @inject NavigationManager navManager
 
 <h3>Add new Member</h3>
 
-<MemberForm model="@member" buttonTitle="Add" HandleValidSubminAsync="@HandleValidSubminAsync"/>
+<MemberForm model="@member" formType="MemberFormType.Add" HandleValidSubminAsync="@HandleValidSubminAsync"/>
 
 @code {
 	private LibraryMember? member { get; set; } = new()
@@ -20,7 +19,6 @@
 	private async Task HandleValidSubminAsync()
 	{
 		await libraryMemberService.AddLibraryMemberAsync(member);
-		//tempService.members.Add(member);
 		navManager.NavigateTo("library-members");
 	}
 }

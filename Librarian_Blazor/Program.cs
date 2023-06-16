@@ -13,6 +13,4 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ILibraryMemberService, LibraryMemberService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
 
-builder.Services.AddScoped<TempService>();
-
 await builder.Build().RunAsync();

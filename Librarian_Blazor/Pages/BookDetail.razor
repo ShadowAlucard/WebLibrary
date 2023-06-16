@@ -3,7 +3,8 @@
 @using Library_Contract
 
 @inject IBookService bookService
-@inject TempService tempService
+@inject ILoanService loanService
+@inject ILibraryMemberService libraryMemberService
 @inject NavigationManager navManager
 
 @if(book is null)
@@ -17,19 +18,47 @@ else
 
 	<h3>@book.Title</h3>
 
-	<p>ID: @book.Id</p>
-	<p>Title: @book.Title</p>
-	<p>Author: @book.Author</p>
-	<p>Publisher: @book.Publisher</p>
-	<p>Publication Year: @book.PublicationYear</p>
-	<p>Inventory Number: @book.InventoryNumber</p>
-	@if(book.IsBorrowed == true){
-        <p class="text-danger">Status: Borrowed</p>
-		<p>Borrowed by: </p>
-    }else {
-        <p class="text-success">Status: Avalible</p>
-    }
+	<table class="h5">
+		<tr>
+			<th class="small text-muted pr-2" scope="row">Title</th>
+			<td>@book.Title</td>
+		</tr>
+		<tr>
+			<th class="small text-muted pr-2" scope="row">Author</th>
+			<td>@book.Author</td>
+		</tr>
+		<tr>
+			<th class="small text-muted pr-2" scope="row">Publisher</th>
+			<td>@book.Publisher</td>
+		</tr>
+		<tr>
+			<th class="small text-muted pr-2" scope="row">Publication Year</th>
+			<td>@book.PublicationYear</td>
+		</tr>
+		<tr>
+			<th class="small text-muted pr-2" scope="row">Inventory Number</th>
+			<td>@book.InventoryNumber</td>
+		</tr>
+		@if (book.IsBorrowed is true)
+		{
+			<tr>
+				<th class="small text-muted pr-2" scope="row">Status</th>
+				<td class="text-danger">Borrowed</td>
+			</tr>
+			<tr>
+				<th class="small text-muted pr-2" scope="row">Borrowed By</th>
+				<td><a href="/library-members/member/@borrowedBy.Id" class="btn btn-primary mb-3">@borrowedBy.Name</a></td>
+			</tr>
+		}
+		else
+		{
+			<tr>
+				<th class="small text-muted pr-2" scope="row">Status</th>
+				<td class="text-success">Borrowed</td>
+			</tr>
+		}
 
+	</table>
 }
 <button @onclick="@OnBackButton" class=" bnt btn-primary form-control">Back</button>
 
@@ -44,9 +73,24 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		book = await bookService.GetBookByIdAsync(Id);
-		//book = tempService.books.First(x => x.Id == Id);
 
-		//TODO: Show who's borrowed the book
+		if (book is null || book.IsBorrowed is false)
+			return;
+
+		// Get the member who borrowed the book
+		var a_lib_m = await libraryMemberService.GetAllLibraryMembersAsync();
+
+		if (a_lib_m is null)
+			return;
+
+		var a_loan = await loanService.GetAllLoansAsync();
+
+		if (a_loan is null)
+			return;
+
+		string loan_readerNumber = a_loan.First(l => l.InventoryNumber.Equals(book.InventoryNumber)).ReaderNumber;
+
+		borrowedBy = a_lib_m.First(m => m.ReaderNumber == loan_readerNumber);
 	}
 
 	private async Task OnBackButton()
