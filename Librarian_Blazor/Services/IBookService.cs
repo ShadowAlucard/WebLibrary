@@ -8,6 +8,8 @@ namespace Librarian_Blazor.Services
         
         Task<Book?> GetBookByIdAsync(int id);
 
+        Task<Book?> GetBookByInventoryNumberAsync(string inventoryNumber);
+
         Task UpdateBookAsync(int id, Book book);
 
         Task DeleteBookAsync(int id);

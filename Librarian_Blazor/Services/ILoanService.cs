@@ -15,5 +15,7 @@ namespace Librarian_Blazor.Services
         Task DeleteLoanAsync(int id);
 
         Task AddLoanAsync(Loan loan);
+
+        Task ReturnAsync(int id);
     }
 }

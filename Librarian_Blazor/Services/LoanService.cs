@@ -27,6 +27,9 @@ namespace Librarian_Blazor.Services
 		public async Task<Loan?> GetLoanByIdAsync(int id) =>
             await _httpClient.GetFromJsonAsync<Loan?>($"Loan/{id}");
 
+        public async Task ReturnAsync(int id) =>
+            await _httpClient.PutAsJsonAsync($"Loan/return/{id}",DateTime.Now);
+
         public async Task UpdateLoanAsync(int id, Loan loan) =>
             await _httpClient.PutAsJsonAsync($"Loan/{id}", loan);
     }

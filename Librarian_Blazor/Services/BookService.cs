@@ -24,6 +24,9 @@ namespace Librarian_Blazor.Services
         public async Task<Book?> GetBookByIdAsync(int id) =>
             await _httpClient.GetFromJsonAsync<Book?>($"Books/{id}");
 
+        public async Task<Book?> GetBookByInventoryNumberAsync(string inventoryNumber) =>
+            await _httpClient.GetFromJsonAsync<Book?>($"Books/book/{inventoryNumber}");
+
         public async Task UpdateBookAsync(int id, Book book) =>
             await _httpClient.PutAsJsonAsync($"Books/{id}", book);
     }
