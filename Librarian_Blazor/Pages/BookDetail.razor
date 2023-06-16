@@ -49,6 +49,13 @@ else
 				<th class="small text-muted pr-2" scope="row">Borrowed By</th>
 				<td><a href="/library-members/member/@borrowedBy.Id" class="btn btn-primary mb-3">@borrowedBy.Name</a></td>
 			</tr>
+			@if (loan is not null)
+			{
+				<tr>
+					<th class="small text-black-muted pr-2" scope="row">Deadline</th>
+					<td>@loan.ReturnDeadline.ToShortDateString()</td>
+				</tr>
+			}
 		}
 		else
 		{
@@ -70,6 +77,8 @@ else
 
 	private LibraryMember? borrowedBy { get; set; }
 
+	private Loan? loan { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		book = await bookService.GetBookByIdAsync(Id);
@@ -88,7 +97,9 @@ else
 		if (a_loan is null)
 			return;
 
-		string loan_readerNumber = a_loan.First(l => l.InventoryNumber.Equals(book.InventoryNumber)).ReaderNumber;
+		loan = a_loan.First(l => l.InventoryNumber.Equals(book.InventoryNumber));
+		
+		string loan_readerNumber = loan.ReaderNumber;
 
 		borrowedBy = a_lib_m.First(m => m.ReaderNumber == loan_readerNumber);
 	}
