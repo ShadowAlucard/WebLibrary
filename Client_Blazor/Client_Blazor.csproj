@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Library_DB\Library_DB.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<KnownRuntimePack Update="@(KnownRuntimePack)">
+			<LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == 'TARGETFRAMEWORK'">EXISTINGVERSION</LatestRuntimeFrameworkVersion>
+		</KnownRuntimePack>
+	</ItemGroup>
+
 </Project>
