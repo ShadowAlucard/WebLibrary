@@ -9,7 +9,7 @@ namespace Library_Contract
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
+        [RegularExpression(@"^[A-ZÁÉÍÓÖŐÚÜŰ][a-záéíóöőúüű]+([- ][A-ZÁÉÍÓÖŐÚÜŰ][a-záéíóöőúüű]+)*$")]
         [Required]
         public string Name { get; set; }
 
