@@ -1,6 +1,6 @@
 ﻿@using Library_Contract
 
-<EditForm Model="@model" OnValidSubmit="@HandleValidSubminAsync" buttonTitle="@buttonTitle">
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubminAsync" formType="@formType">
 	<DataAnnotationsValidator/>
 
 	<div class="mb-3">
@@ -18,13 +18,24 @@
 		<InputDate @bind-Value="model.BirthDate" class="form-control"/>
 		<ValidationMessage For="() => model.BirthDate"/>
 	</div>
-	<div class="mb-3">
-		<label class="form-label">Reader Number</label>
-		<InputText @bind-Value="model.ReaderNumber" class="form-control"/>
-		<ValidationMessage For="() => model.ReaderNumber"/>
-	</div>
-
-	<button type="submit" class="btn btn-success form-control mb-3">@buttonTitle</button>
+	@if (formType == MemberFormType.Add)
+	{
+		<div class="mb-3">
+			<label class="form-label">Reader Number</label>
+			<InputText @bind-Value="model.ReaderNumber" class="form-control"/>
+			<ValidationMessage For="() => model.ReaderNumber"/>
+		</div>
+	}
+		
+	@if(formType == MemberFormType.Add)
+	{
+		<button type="submit" class="btn btn-success form-control mb-3">Add</button>
+	}
+	else
+	{
+		<button type="submit" class="btn btn-success form-control mb-3">Save</button>
+	}
+		
 </EditForm>
 
 @code {
@@ -32,7 +43,7 @@
 	public LibraryMember model { get; set; }
 
 	[Parameter]
-	public string buttonTitle { get; set; }
+	public MemberFormType formType { get; set; }
 
 	[Parameter]
 	public Func<Task> HandleValidSubminAsync { get; set; }
