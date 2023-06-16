@@ -54,6 +54,21 @@ namespace Library_DB.Controllers
 
             return Ok(book);
         }
+
+        //könyv lekérés leltári szám alapján
+        [HttpGet("book/{inventoryNumber}")]
+        public async Task<ActionResult<Book>> GetByInventoryNumber(string inventoryNumber)
+        {
+            var book = await _libraryContext.Books.Where(b => b.InventoryNumber == inventoryNumber).FirstOrDefaultAsync();
+
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(book);
+        }
+
         //könyv állapotának lekérdezése
         [HttpGet("status/{id}")]
         public async Task<ActionResult<Book>> GetBookWithLoaner(int id)

@@ -1,0 +1,50 @@
+﻿@page "/allbooks"
+@using Library_DB
+@using Client_Blazor.Services
+@inject IBookService BookService
+
+<PageTitle>Available Books</PageTitle>
+
+@if (Lib_Books is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>AvailableBooks</h3>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Inventory Number</th>
+            <th>Publication Year</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach(var book in Lib_Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Publisher</td>
+                    <td>@book.InventoryNumber</td>
+                    <td>@book.PublicationYear</td>
+                    <td><a href="allbooks/@book.Id" class="btn btn-primary">Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>    
+}
+
+
+@code {
+    private IEnumerable<Book>? Lib_Books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Lib_Books = await BookService.GetAllBookAsync();
+    }
+}
