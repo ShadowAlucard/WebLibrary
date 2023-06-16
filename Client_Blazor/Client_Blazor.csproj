@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Library_DB\Library_DB.csproj" />
+    <ProjectReference Include="..\Library_Contract\Library_Contract.csproj" />
   </ItemGroup>
 
 </Project>

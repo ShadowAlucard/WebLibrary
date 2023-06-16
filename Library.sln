@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library_DB", "Library_DB\Library_DB.csproj", "{A2AA0FCB-D3FC-4C2C-97A4-96100538359F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client_Blazor", "Client_Blazor\Client_Blazor.csproj", "{640BB5E9-5B86-4BB5-A600-ABAFE132D701}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8E30A3D5-00A9-4026-8EA0-2A118D57DAD6} = {8E30A3D5-00A9-4026-8EA0-2A118D57DAD6}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librarian_Blazor", "Librarian_Blazor\Librarian_Blazor.csproj", "{B017A3F6-D06A-4087-AA8D-22C92F8C3AE7}"
 EndProject

@@ -1,5 +1,6 @@
 ﻿@page "/mybooks"
 @using Client_Blazor.Services;
+@using Library_Contract
 @inject IBookService BookService;
 
 <PageTitle>My Books</PageTitle>
@@ -52,11 +53,6 @@ else
     [CascadingParameter]
     public MainLayout mainLayout { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
     [Parameter]
     public int Id { get; set; }
 
@@ -64,6 +60,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Lib_Books = await BookService.GetAllBookAsync();
+        Lib_Books = await BookService.GetAllBooksAsync();
     }
 }

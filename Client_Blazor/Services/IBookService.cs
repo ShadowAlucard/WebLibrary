@@ -1,23 +1,19 @@
-﻿namespace Client_Blazor.Services
+﻿using Library_Contract;
+
+namespace Client_Blazor.Services
 {
     public interface IBookService
     {
-        Task<IEnumerable<Book>?> GetAllBookAsync();
-
+        Task<IEnumerable<Book>?> GetAllBooksAsync();
+        
         Task<Book?> GetBookByIdAsync(int id);
-    }
 
-    public interface ILoanService
-    {
-        Task<IEnumerable<Loan>?> GetAllLoanAsync();
+        Task<Book?> GetBookByInventoryNumberAsync(string inventoryNumber);
 
-        Task<Loan?> GetLoanByIdAsync(int id);
-    }
+        Task UpdateBookAsync(int id, Book book);
 
-    public interface IMemberService
-    {
-        Task<IEnumerable<LibraryMember>?> GetAllMemberAsync();
+        Task DeleteBookAsync(int id);
 
-        Task<LibraryMember?> GetMemberByIdAsync(int id);
+        Task AddBookAsync(Book book);
     }
 }
