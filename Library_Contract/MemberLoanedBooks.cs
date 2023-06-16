@@ -1,4 +1,4 @@
-﻿namespace Library_DB.Models
+﻿namespace Library_Contract
 {
     public class MemberLoanedBooks
     {

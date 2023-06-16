@@ -89,6 +89,7 @@ namespace Library_DB.Controllers
                         {
                             Id = l.Id,
                             BookName = lb.Title,
+                            InventoryNumber = lb.InventoryNumber,
                             LoanDate = l.LoanDate,
                             ReturnDate = l.ReturnDate,
                             ReturnDeadline = l.ReturnDeadline
