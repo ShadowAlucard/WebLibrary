@@ -1,10 +1,9 @@
 ﻿@page "/allbooks/{id:int}"
 @using Library_Contract
-@using Library_DB
 @using Client_Blazor.Services
 @inject IBookService BookService
 @inject ILoanService LoanService
-@inject IMemberService MemberService
+@inject ILibraryMemberService LibraryMemberService
 
 @if (Book is null)
 {
@@ -18,10 +17,10 @@ else
     {
         <h4>This book has been borrowed.</h4>
         <p>
-            Person Name: @LibraryMember.Name
+            Person Name: @Member.Name
         </p>
         <p>
-            Deadline: @Loan.ReturnDeadline
+            Deadline: @MyLoan.ReturnDeadline
         </p>
     }
     else
@@ -52,14 +51,14 @@ else
 
 
     private Book? Book { get; set; }
-    private Loan? Loan { get; set; }
+    private Loan? MyLoan { get; set; }
     private LibraryMember? Member { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Book = await BookService.GetBookByIdAsync(Id);
-        Loan = await LoanService.GetLoanByIdAsync(Id);
-        Member = await MemberService.GetMemberByIdAsync(Id);
+        MyLoan = await LoanService.GetLoanByIdAsync(Id);
+        Member = await LibraryMemberService.GetLibraryMemberByIdAsync(Id);
     }
 
 }

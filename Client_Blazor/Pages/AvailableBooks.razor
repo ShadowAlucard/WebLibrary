@@ -1,6 +1,5 @@
 ﻿@page "/allbooks"
 @using Library_Contract
-@using Library_DB
 @using Client_Blazor.Services
 @inject IBookService BookService
 
@@ -46,6 +45,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Lib_Books = await BookService.GetAllBookAsync();
+        Lib_Books = await BookService.GetAllBooksAsync();
     }
 }

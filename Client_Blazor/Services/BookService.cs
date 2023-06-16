@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Json;
 using Library_Contract;
-using Library_DB;
 
 namespace Client_Blazor.Services
 {
@@ -9,46 +8,26 @@ namespace Client_Blazor.Services
         private readonly HttpClient _httpClient;
 
         public BookService(HttpClient httpClient)
-        { 
-            _httpClient = httpClient;
-        }
-
-        public Task<IEnumerable<Book>?> GetAllBookAsync() => 
-            _httpClient.GetFromJsonAsync<IEnumerable<Book>>("Book");
-
-        public Task<Book?> GetBookByIdAsync(int id) =>
-            _httpClient.GetFromJsonAsync<Book?>($"Book/{id}");
-    }
-
-    public class LoanService : ILoanService
-    {
-        private readonly HttpClient _httpClient;
-
-        public LoanService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public Task<IEnumerable<Loan>?> GetAllLoanAsync() =>
-            _httpClient.GetFromJsonAsync<IEnumerable<Loan>>("Loan");
+        public async Task AddBookAsync(Book book) =>
+            await _httpClient.PostAsJsonAsync("Books", book);
 
-        public Task<Loan?> GetLoanByIdAsync(int id) =>
-            _httpClient.GetFromJsonAsync<Loan?>($"Loan/{id}");
-    }
+        public async Task DeleteBookAsync(int id) =>
+            await _httpClient.DeleteAsync($"Books/{id}");
 
-    public class MemberService : IMemberService
-    {
-        private readonly HttpClient _httpClient;
+        public async Task<IEnumerable<Book>?> GetAllBooksAsync() =>
+            await _httpClient.GetFromJsonAsync<IEnumerable<Book>?>("Books");
 
-        public MemberService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+        public async Task<Book?> GetBookByIdAsync(int id) =>
+            await _httpClient.GetFromJsonAsync<Book?>($"Books/{id}");
 
-        public Task<IEnumerable<LibraryMember>?> GetAllMemberAsync() =>
-            _httpClient.GetFromJsonAsync<IEnumerable<LibraryMember>>("LibraryMember");
+        public async Task<Book?> GetBookByInventoryNumberAsync(string inventoryNumber) =>
+            await _httpClient.GetFromJsonAsync<Book?>($"Books/book/{inventoryNumber}");
 
-        public Task<LibraryMember?> GetMemberByIdAsync(int id) =>
-            _httpClient.GetFromJsonAsync<LibraryMember?>($"LibraryMember/{id}");
+        public async Task UpdateBookAsync(int id, Book book) =>
+            await _httpClient.PutAsJsonAsync($"Books/{id}", book);
     }
 }
