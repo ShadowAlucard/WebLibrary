@@ -25,7 +25,7 @@
                     <th>Publication Year</th>
                 </tr>
             </thead>
-            <body>
+            <tbody>
                 @foreach (var book in Lib_Books)
                 {
                 <tr>
@@ -36,7 +36,7 @@
                     <td>@book.PublicationYear</td>
                 </tr>
                 }
-            </body>
+            </tbody>
         </table>
     }
 }
