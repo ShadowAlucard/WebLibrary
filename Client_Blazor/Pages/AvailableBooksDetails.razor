@@ -14,7 +14,7 @@ else
 {
     <h3>@Book.Title's Details</h3>
 
-    @if (@Book.IsBorrowed)
+    @if (Book.IsBorrowed is true)
     {
         <h4>This book has been borrowed.</h4>
         <p>
@@ -52,13 +52,13 @@ else
 
 
     private Book? Book { get; set; }
-    private Loan? MyLoan { get; set; }
+    private Loan? Loan { get; set; }
     private LibraryMember? Member { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Book = await BookService.GetBookByIdAsync(Id);
-        MyLoan = await LoanService.GetLoanByIdAsync(Id);
+        Loan = await LoanService.GetLoanByIdAsync(Id);
         Member = await MemberService.GetMemberByIdAsync(Id);
     }
 
